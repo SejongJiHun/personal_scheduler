@@ -2,9 +2,11 @@ package com.scheduler.personalscheduler.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -22,4 +24,18 @@ public class User {
 
     @Column(nullable = false)
     private String role = "USER";
+
+
+    public User(String email, String password, String nickname) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+    }
+
+    public User(String email, String password, String nickname, String role) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.role = role;
+    }
 }
