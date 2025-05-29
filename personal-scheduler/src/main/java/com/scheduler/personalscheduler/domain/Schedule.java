@@ -23,7 +23,7 @@ public class Schedule {
     private String title;  // 일정 제목
 
     @Column(length = 1500)
-    private String description;  // 일정 상세 설명 (선택)
+    private String description;  // 일정 상세 설명
 
     @Column(nullable = false)
     private LocalDate startDate;  // 시작일

@@ -34,19 +34,26 @@ public class ScheduleService {
         LocalDate today = LocalDate.now();
 
         return switch (filter) {
+
+            // 사이드바의 "오늘"
+            // 일정에 오늘이 포함되어 있으면 today
             case "today" -> scheduleRepository.findAll().stream()
                     .filter(s -> !s.getStartDate().isAfter(today) && !s.getEndDate().isBefore(today))
                     .toList();
 
+            // 사이드바의 "미래"
+            // 일정에 오늘 이후가 포함되어 있으면 future
+            case "future" -> scheduleRepository.findAll().stream()
+                    .filter(s -> s.getEndDate().isAfter(today))
+                    .toList();
+
+            // 사이드바의 "과거"
+            // 일정의 마지막 날이 오늘 이전이면 past
             case "past" -> scheduleRepository.findAll().stream()
                     .filter(s -> s.getEndDate().isBefore(today))
                     .toList();
 
-            case "future" -> scheduleRepository.findAll().stream()
-                    .filter(s -> s.getStartDate().isAfter(today))
-                    .toList();
-
-            default -> scheduleRepository.findAll();  // all or unknown
+            default -> scheduleRepository.findAll();
         };
     }
 
@@ -55,4 +62,19 @@ public class ScheduleService {
     public void delete(Long id) {
         scheduleRepository.deleteById(id);
     }
+
+    // 일정 수정
+    public Schedule update(Long id, Schedule updated) {
+        Schedule original = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("일정이 존재하지 않습니다."));
+
+        original.setTitle(updated.getTitle());
+        original.setDescription(updated.getDescription());
+        original.setStartDate(updated.getStartDate());
+        original.setEndDate(updated.getEndDate());
+
+        return scheduleRepository.save(original);
+    }
+
+
 }

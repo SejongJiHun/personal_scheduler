@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Scheduler</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+<div class="container">
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+        <h2>📅 일정 관리</h2>
+        <ul>
+            <li onclick="loadSchedules('all')">보관함</li>
+            <li onclick="loadSchedules('today')">오늘</li>
+            <li onclick="loadSchedules('future')">미래</li>
+            <li onclick="loadSchedules('past')">과거</li>
+        </ul>
+    </aside>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main">
+        <header class="top-bar">
+            <h1 id="section-title">보관함</h1>
+            <button onclick="openModal()">+ 일정 추가</button>
+        </header>
+
+        <ul id="schedule-list" class="schedule-list">
+            <!-- 일정 항목이 여기에 렌더링됨 -->
+        </ul>
+    </main>
+</div>
+
+<!-- 일정 추가/수정 모달 -->
+<div id="modal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title">일정 추가</h2>
+        <form id="schedule-form">
+            <input type="hidden" id="scheduleId">
+            <label>제목 <input type="text" id="title" required></label>
+            <label>설명 <input type="text" id="description"></label>
+            <label>시작일 <input type="date" id="startDate" required></label>
+            <label>종료일 <input type="date" id="endDate" required></label>
+            <button type="submit">저장</button>
+        </form>
+    </div>
+</div>
+
+<script src="js/index.js"></script>
+</body>
+</html>
