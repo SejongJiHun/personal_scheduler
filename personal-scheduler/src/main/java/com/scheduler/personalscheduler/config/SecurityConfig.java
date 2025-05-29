@@ -47,15 +47,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // 프론트가 localhost면 여기 설정
+        config.setAllowedOrigins(List.of("http://localhost:5500")); // 또는 file:// 안 쓰면 프론트 포트 명시
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(false); // 필요시 true
+        config.setAllowCredentials(true); // 🔥 세션 쿠키 허용
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 
 
 }

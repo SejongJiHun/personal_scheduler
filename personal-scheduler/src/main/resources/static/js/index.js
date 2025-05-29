@@ -18,40 +18,42 @@ function loadSchedules(filter) {
 
     document.getElementById("section-title").textContent = sectionTitle;
 
-    fetch(`${apiBase}?filter=${filter}`)
+    fetchWithCredentials(`${apiBase}?filter=${filter}`)
         .then(res => res.json())
-        .then(data => {
-            const list = document.getElementById("schedule-list");
-            list.innerHTML = "";
+        .then(data => renderScheduleList(data));
+}
 
-            data.forEach(s => {
-                const item = document.createElement("li");
+function renderScheduleList(data) {
+    const list = document.getElementById("schedule-list");
+    list.innerHTML = "";
 
-                const span = document.createElement("span");
-                span.innerHTML = `<strong>${escapeHTML(s.title)}</strong> (${s.startDate} ~ ${s.endDate})`;
+    data.forEach(s => {
+        const item = document.createElement("li");
 
-                const editBtn = document.createElement("button");
-                editBtn.textContent = "수정";
-                editBtn.addEventListener("click", () => {
-                    editSchedule(s.id, s.title, s.description, s.startDate, s.endDate);
-                });
+        const span = document.createElement("span");
+        span.innerHTML = `<strong>${escapeHTML(s.title)}</strong> (${s.startDate} ~ ${s.endDate})`;
 
-                const delBtn = document.createElement("button");
-                delBtn.textContent = "삭제";
-                delBtn.addEventListener("click", () => {
-                    deleteSchedule(s.id);
-                });
-
-                const actions = document.createElement("div");
-                actions.className = "actions";
-                actions.appendChild(editBtn);
-                actions.appendChild(delBtn);
-
-                item.appendChild(span);
-                item.appendChild(actions);
-                list.appendChild(item);
-            });
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "수정";
+        editBtn.addEventListener("click", () => {
+            editSchedule(s.id, s.title, s.description, s.startDate, s.endDate);
         });
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "삭제";
+        delBtn.addEventListener("click", () => {
+            deleteSchedule(s.id);
+        });
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        item.appendChild(span);
+        item.appendChild(actions);
+        list.appendChild(item);
+    });
 }
 
 function openModal(isEdit = false) {
@@ -79,22 +81,22 @@ function handleSubmit(e) {
     const method = id ? "PUT" : "POST";
     const url = id ? `${apiBase}/${id}` : apiBase;
 
-    fetch(url, {
-        method: method,
+    fetchWithCredentials(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(schedule)
     })
         .then(res => res.json())
         .then(() => {
             closeModal();
-            loadSchedules(currentFilter); // 현재 필터 유지
+            loadSchedules(currentFilter);
         });
 }
 
 function deleteSchedule(id) {
-    fetch(`${apiBase}/${id}`, {
+    fetchWithCredentials(`${apiBase}/${id}`, {
         method: "DELETE"
-    }).then(() => loadSchedules(currentFilter)); // 현재 필터 유지
+    }).then(() => loadSchedules(currentFilter));
 }
 
 function editSchedule(id, title, description, startDate, endDate) {
@@ -114,4 +116,12 @@ function escapeHTML(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+// ✅ CORS 세션 쿠키 허용 fetch wrapper
+function fetchWithCredentials(url, options = {}) {
+    return fetch(url, {
+        ...options,
+        credentials: "include" // 중요! 세션 쿠키 포함
+    });
 }

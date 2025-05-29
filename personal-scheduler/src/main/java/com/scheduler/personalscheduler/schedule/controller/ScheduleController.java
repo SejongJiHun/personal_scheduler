@@ -1,11 +1,10 @@
-package com.scheduler.personalscheduler.controller;
+package com.scheduler.personalscheduler.schedule.controller;
 
 
-import com.scheduler.personalscheduler.domain.Schedule;
-import com.scheduler.personalscheduler.service.ScheduleService;
+import com.scheduler.personalscheduler.schedule.domain.Schedule;
+import com.scheduler.personalscheduler.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

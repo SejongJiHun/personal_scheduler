@@ -1,8 +1,8 @@
-package com.scheduler.personalscheduler.service;
+package com.scheduler.personalscheduler.schedule.service;
 
 
-import com.scheduler.personalscheduler.domain.Schedule;
-import com.scheduler.personalscheduler.repository.ScheduleRepository;
+import com.scheduler.personalscheduler.schedule.domain.Schedule;
+import com.scheduler.personalscheduler.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,9 +19,15 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
-    // 일정 생성
+    // 일정 생성 (id, isDone, role 조작 방어 위해 파라미터를 바로 save하지 않음)
     public Schedule create(Schedule schedule) {
-        return scheduleRepository.save(schedule);
+        Schedule newSchedule = Schedule.create(
+                schedule.getTitle(),
+                schedule.getDescription(),
+                schedule.getStartDate(),
+                schedule.getEndDate()
+        );
+        return scheduleRepository.save(newSchedule);
     }
 
     // 모든 일정 조회
@@ -34,7 +40,6 @@ public class ScheduleService {
         LocalDate today = LocalDate.now();
 
         return switch (filter) {
-
             // 사이드바의 "오늘"
             // 일정에 오늘이 포함되어 있으면 today
             case "today" -> scheduleRepository.findAll().stream()
@@ -57,24 +62,23 @@ public class ScheduleService {
         };
     }
 
-
     // 일정 삭제
     public void delete(Long id) {
         scheduleRepository.deleteById(id);
     }
 
-    // 일정 수정
+    // 일정 수정 (수정됨: setter 제거 → update 메서드 사용)
     public Schedule update(Long id, Schedule updated) {
         Schedule original = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("일정이 존재하지 않습니다."));
 
-        original.setTitle(updated.getTitle());
-        original.setDescription(updated.getDescription());
-        original.setStartDate(updated.getStartDate());
-        original.setEndDate(updated.getEndDate());
+        original.update(
+                updated.getTitle(),
+                updated.getDescription(),
+                updated.getStartDate(),
+                updated.getEndDate()
+        );
 
         return scheduleRepository.save(original);
     }
-
-
 }
