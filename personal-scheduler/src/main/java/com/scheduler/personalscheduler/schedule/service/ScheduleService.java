@@ -2,6 +2,9 @@ package com.scheduler.personalscheduler.schedule.service;
 
 
 import com.scheduler.personalscheduler.schedule.domain.Schedule;
+import com.scheduler.personalscheduler.schedule.dto.ScheduleCreateDto;
+import com.scheduler.personalscheduler.schedule.dto.ScheduleResponseDto;
+import com.scheduler.personalscheduler.schedule.dto.ScheduleUpdateDto;
 import com.scheduler.personalscheduler.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +23,14 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
     // 일정 생성 (id, isDone, role 조작 방어 위해 파라미터를 바로 save하지 않음)
-    public Schedule create(Schedule schedule) {
+    public ScheduleResponseDto create(ScheduleCreateDto scheduleCreateDto) {
         Schedule newSchedule = Schedule.create(
-                schedule.getTitle(),
-                schedule.getDescription(),
-                schedule.getStartDate(),
-                schedule.getEndDate()
+                scheduleCreateDto.getTitle(),
+                scheduleCreateDto.getDescription(),
+                scheduleCreateDto.getStartDate(),
+                scheduleCreateDto.getEndDate()
         );
-        return scheduleRepository.save(newSchedule);
+        return ScheduleResponseDto.from(scheduleRepository.save(newSchedule));
     }
 
     // 모든 일정 조회
@@ -36,10 +39,10 @@ public class ScheduleService {
     }
 
     // 필터를 통해 오늘, 미래, 과거 일정 조회
-    public List<Schedule> getByFilter(String filter) {
+    public List<ScheduleResponseDto> getByFilter(String filter) {
         LocalDate today = LocalDate.now();
 
-        return switch (filter) {
+        List<Schedule> schedules = switch (filter) {
             // 사이드바의 "오늘"
             // 일정에 오늘이 포함되어 있으면 today
             case "today" -> scheduleRepository.findAll().stream()
@@ -58,8 +61,14 @@ public class ScheduleService {
                     .filter(s -> s.getEndDate().isBefore(today))
                     .toList();
 
+            // 기본: 전체 일정 반환 (보관함)
             default -> scheduleRepository.findAll();
         };
+
+        // Schedule → ScheduleResponseDto 변환
+        return schedules.stream()
+                .map(ScheduleResponseDto::from)
+                .toList();
     }
 
     // 일정 삭제
@@ -68,17 +77,17 @@ public class ScheduleService {
     }
 
     // 일정 수정 (수정됨: setter 제거 → update 메서드 사용)
-    public Schedule update(Long id, Schedule updated) {
+    public ScheduleResponseDto update(Long id, ScheduleUpdateDto scheduleUpdateDto) {
         Schedule original = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("일정이 존재하지 않습니다."));
 
         original.update(
-                updated.getTitle(),
-                updated.getDescription(),
-                updated.getStartDate(),
-                updated.getEndDate()
+                scheduleUpdateDto.getTitle(),
+                scheduleUpdateDto.getDescription(),
+                scheduleUpdateDto.getStartDate(),
+                scheduleUpdateDto.getEndDate()
         );
 
-        return scheduleRepository.save(original);
+        return ScheduleResponseDto.from(scheduleRepository.save(original));
     }
 }
