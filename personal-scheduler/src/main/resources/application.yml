@@ -1,6 +1,12 @@
 
 server:
   port: 8080
+  servlet:
+    session:
+      cookie:
+        secure: false     # 🔥 HTTPS가 아닌 환경에서 쿠키가 차단되지 않도록
+        http-only: true   # JavaScript 접근 막고 보안 강화
+        same-site: lax
 
 spring:
   datasource:

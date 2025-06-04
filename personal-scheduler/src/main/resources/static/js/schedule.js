@@ -1,10 +1,23 @@
 const apiBase = "/api/schedules";
-let currentFilter = "all"; // 현재 필터 기억
+let currentFilter = "all";
 
 window.onload = () => {
+    checkLogin(); // 🔒 세션 검사 먼저
     loadSchedules("all");
     document.getElementById("schedule-form").addEventListener("submit", handleSubmit);
 };
+
+function checkLogin() {
+    fetch("/api/me", { credentials: "include" })
+        .then(res => {
+            if (!res.ok) throw new Error("로그인이 필요합니다.");
+            return res.json();
+        })
+        .catch(() => {
+            alert("로그인이 필요합니다.");
+            window.location.href = "login.html";
+        });
+}
 
 function loadSchedules(filter) {
     currentFilter = filter;
@@ -20,7 +33,10 @@ function loadSchedules(filter) {
 
     fetchWithCredentials(`${apiBase}?filter=${filter}`)
         .then(res => res.json())
-        .then(data => renderScheduleList(data));
+        .then(data => {
+            console.log("📦 받은 데이터:", data);
+            renderScheduleList(data.data); // ✅ 여기 핵심
+        });
 }
 
 function renderScheduleList(data) {
@@ -76,7 +92,7 @@ function handleSubmit(e) {
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
 
-    const schedule = { title, description, startDate, endDate, isDone: false };
+    const schedule = { title, description, startDate, endDate };
 
     const method = id ? "PUT" : "POST";
     const url = id ? `${apiBase}/${id}` : apiBase;
@@ -108,7 +124,6 @@ function editSchedule(id, title, description, startDate, endDate) {
     openModal(true);
 }
 
-// HTML 이스케이프 처리 (XSS 방지용)
 function escapeHTML(str) {
     if (!str) return "";
     return str.replace(/&/g, "&amp;")
@@ -118,10 +133,9 @@ function escapeHTML(str) {
         .replace(/'/g, "&#039;");
 }
 
-// ✅ CORS 세션 쿠키 허용 fetch wrapper
 function fetchWithCredentials(url, options = {}) {
     return fetch(url, {
         ...options,
-        credentials: "include" // 중요! 세션 쿠키 포함
+        credentials: "include"
     });
 }

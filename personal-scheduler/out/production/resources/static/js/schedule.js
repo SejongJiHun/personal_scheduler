@@ -1,10 +1,23 @@
 const apiBase = "/api/schedules";
-let currentFilter = "all"; // 현재 필터 기억
+let currentFilter = "all";
 
 window.onload = () => {
+    checkLogin(); // 🔒 세션 검사 먼저
     loadSchedules("all");
     document.getElementById("schedule-form").addEventListener("submit", handleSubmit);
 };
+
+function checkLogin() {
+    fetch("/api/me", { credentials: "include" })
+        .then(res => {
+            if (!res.ok) throw new Error("로그인이 필요합니다.");
+            return res.json();
+        })
+        .catch(() => {
+            alert("로그인이 필요합니다.");
+            window.location.href = "login.html";
+        });
+}
 
 function loadSchedules(filter) {
     currentFilter = filter;
@@ -18,40 +31,45 @@ function loadSchedules(filter) {
 
     document.getElementById("section-title").textContent = sectionTitle;
 
-    fetch(`${apiBase}?filter=${filter}`)
+    fetchWithCredentials(`${apiBase}?filter=${filter}`)
         .then(res => res.json())
         .then(data => {
-            const list = document.getElementById("schedule-list");
-            list.innerHTML = "";
-
-            data.forEach(s => {
-                const item = document.createElement("li");
-
-                const span = document.createElement("span");
-                span.innerHTML = `<strong>${escapeHTML(s.title)}</strong> (${s.startDate} ~ ${s.endDate})`;
-
-                const editBtn = document.createElement("button");
-                editBtn.textContent = "수정";
-                editBtn.addEventListener("click", () => {
-                    editSchedule(s.id, s.title, s.description, s.startDate, s.endDate);
-                });
-
-                const delBtn = document.createElement("button");
-                delBtn.textContent = "삭제";
-                delBtn.addEventListener("click", () => {
-                    deleteSchedule(s.id);
-                });
-
-                const actions = document.createElement("div");
-                actions.className = "actions";
-                actions.appendChild(editBtn);
-                actions.appendChild(delBtn);
-
-                item.appendChild(span);
-                item.appendChild(actions);
-                list.appendChild(item);
-            });
+            console.log("📦 받은 데이터:", data);
+            renderScheduleList(data.data); // ✅ 여기 핵심
         });
+}
+
+function renderScheduleList(data) {
+    const list = document.getElementById("schedule-list");
+    list.innerHTML = "";
+
+    data.forEach(s => {
+        const item = document.createElement("li");
+
+        const span = document.createElement("span");
+        span.innerHTML = `<strong>${escapeHTML(s.title)}</strong> (${s.startDate} ~ ${s.endDate})`;
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "수정";
+        editBtn.addEventListener("click", () => {
+            editSchedule(s.id, s.title, s.description, s.startDate, s.endDate);
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "삭제";
+        delBtn.addEventListener("click", () => {
+            deleteSchedule(s.id);
+        });
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        item.appendChild(span);
+        item.appendChild(actions);
+        list.appendChild(item);
+    });
 }
 
 function openModal(isEdit = false) {
@@ -74,27 +92,27 @@ function handleSubmit(e) {
     const startDate = document.getElementById("startDate").value;
     const endDate = document.getElementById("endDate").value;
 
-    const schedule = { title, description, startDate, endDate, isDone: false };
+    const schedule = { title, description, startDate, endDate };
 
     const method = id ? "PUT" : "POST";
     const url = id ? `${apiBase}/${id}` : apiBase;
 
-    fetch(url, {
-        method: method,
+    fetchWithCredentials(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(schedule)
     })
         .then(res => res.json())
         .then(() => {
             closeModal();
-            loadSchedules(currentFilter); // 현재 필터 유지
+            loadSchedules(currentFilter);
         });
 }
 
 function deleteSchedule(id) {
-    fetch(`${apiBase}/${id}`, {
+    fetchWithCredentials(`${apiBase}/${id}`, {
         method: "DELETE"
-    }).then(() => loadSchedules(currentFilter)); // 현재 필터 유지
+    }).then(() => loadSchedules(currentFilter));
 }
 
 function editSchedule(id, title, description, startDate, endDate) {
@@ -106,7 +124,6 @@ function editSchedule(id, title, description, startDate, endDate) {
     openModal(true);
 }
 
-// HTML 이스케이프 처리 (XSS 방지용)
 function escapeHTML(str) {
     if (!str) return "";
     return str.replace(/&/g, "&amp;")
@@ -114,4 +131,11 @@ function escapeHTML(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+function fetchWithCredentials(url, options = {}) {
+    return fetch(url, {
+        ...options,
+        credentials: "include"
+    });
 }

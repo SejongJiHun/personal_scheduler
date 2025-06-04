@@ -64,6 +64,8 @@ public class AuthService {
         }
 
         request.getSession().setAttribute(LOGIN_USER, user.getId());
+
+        log.info("✅ 로그인 성공 - 세션 ID: {}", request.getSession().getId());
     }
 
     // 로그아웃

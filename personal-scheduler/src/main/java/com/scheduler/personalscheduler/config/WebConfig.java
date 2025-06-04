@@ -16,6 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginCheckInterceptor)
                 .addPathPatterns("/api/me", "/api/schedules/**") // 보호할 경로 지정
+                .addPathPatterns("/api/test-interceptor")
                 .excludePathPatterns("/api/login", "/api/signup", "/api/logout"); // 인증 필요 없는 경로
     }
 }

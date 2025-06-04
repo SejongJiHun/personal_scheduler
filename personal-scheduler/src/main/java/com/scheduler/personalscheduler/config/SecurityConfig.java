@@ -4,6 +4,7 @@ package com.scheduler.personalscheduler.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,11 +33,15 @@ public class SecurityConfig {
 
                 // 요청별 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/", "/index.html", "/html/**", "/css/**", "/js/**", "/favicon.ico").permitAll()
                         .requestMatchers("/api/signup", "/api/login").permitAll()
                         .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요
                         .anyRequest().permitAll()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // ✅ 명시해주면 더 안정적
                 );
+
 
         // 설정된 시큐리티 필터 체인 빌드 후 반환
         return http.build();
