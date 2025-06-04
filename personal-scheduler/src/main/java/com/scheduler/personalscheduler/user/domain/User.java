@@ -9,19 +9,19 @@ import lombok.*;
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // 자동 생성 아이디
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String email; // 이메일
 
     @Column(nullable = false)
-    private String password;
+    private String password; // 비밀번호
 
     @Column(nullable = false, unique = true)
-    private String nickname;
+    private String nickname; // 닉네임
 
     @Column(nullable = false)
-    private String role = "USER";
+    private String role = "USER"; // 역할
 
     public User(String email, String password, String nickname) {
         this.email = email;

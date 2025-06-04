@@ -1,195 +1,55 @@
-/* 기본 레이아웃 */
 body {
-    margin: 0;
     font-family: 'Noto Sans KR', sans-serif;
-    background-color: #fafafa;
-    color: #333;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
-    display: flex;
-    height: 100vh;
-}
-
-.sidebar {
-    width: 220px;
-    background-color: #f8f9fa;
-    padding: 24px 20px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
-}
-
-.sidebar h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-    color: #007bff;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar li {
-    margin: 16px 0;
-    cursor: pointer;
-    font-weight: 500;
-    color: #444;
-    transition: color 0.2s;
-}
-
-.sidebar li:hover {
-    color: #007bff;
-}
-
-.main {
-    flex-grow: 1;
+    width: 300px;
+    margin: 80px auto;
     padding: 30px;
-    overflow-y: auto;
-}
-
-.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.top-bar h1 {
-    font-size: 24px;
-    margin: 0;
-}
-
-.top-bar button {
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    border: 1px solid #007bff;
-    background-color: white;
-    color: #007bff;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-.top-bar button:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-.schedule-list {
-    margin-top: 25px;
-    padding: 0;
-    list-style: none;
-}
-
-.schedule-list li {
-    padding: 14px 12px;
-    margin-bottom: 12px;
     background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-.schedule-list li span {
-    font-size: 15px;
-    color: #222;
-}
-
-.actions {
-    display: flex;
-    gap: 10px;
-}
-
-.actions button {
-    padding: 6px 12px;
-    font-size: 13px;
-    font-weight: 500;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.actions button:hover {
-    background-color: #f1f1f1;
-}
-
-/* 모달 스타일 */
-.modal {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal.hidden {
-    display: none;
-}
-
-.modal-content {
-    background: white;
-    padding: 25px;
-    width: 320px;
-    border-radius: 10px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
-
-.modal-content h2 {
-    margin: 0 0 10px;
-    font-size: 20px;
+h1, h2 {
+    margin-bottom: 24px;
     color: #007bff;
 }
 
-.modal-content label {
+label {
     display: block;
-    margin: 12px 0 6px;
+    margin: 12px 0;
+    text-align: left;
     font-weight: 500;
 }
 
-.modal-content input {
+input {
     width: 100%;
     padding: 8px;
+    margin-top: 4px;
+    box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 14px;
 }
 
-.modal-content button {
-    margin-top: 18px;
+button {
     width: 100%;
+    margin-top: 20px;
     padding: 10px;
-    background: #007bff;
-    color: white;
+    background-color: #007bff;
     border: none;
-    border-radius: 6px;
+    color: white;
     font-weight: bold;
-    font-size: 15px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
-.modal-content button:hover {
-    background: #0056b3;
-}
-
-.close {
-    float: right;
-    font-size: 22px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #aaa;
-}
-
-.close:hover {
-    color: #333;
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }

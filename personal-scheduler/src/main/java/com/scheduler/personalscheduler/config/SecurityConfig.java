@@ -32,11 +32,10 @@ public class SecurityConfig {
 
                 // 요청별 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/api/signup").permitAll()
-                        .requestMatchers("/api/schedules").permitAll()
-                        .requestMatchers("/api/schedules/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/api/signup", "/api/login").permitAll()
+                        .requestMatchers("/api/**").authenticated() // 나머지 API는 인증 필요
+                        .anyRequest().permitAll()
                 );
 
         // 설정된 시큐리티 필터 체인 빌드 후 반환
